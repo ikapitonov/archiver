@@ -17,7 +17,7 @@ public class Compressor {
     public Compressor(byte[] array, int length) {
         this.array = array;
         this.length = length;
-     //   System.out.println(System.currentTimeMillis());
+
         busy = new Overlap[length];
         overlap = new ArrayList(Constants.COMPRESS_MAX);
 
@@ -33,14 +33,35 @@ public class Compressor {
         for (int i = Constants.COMPRESS_MAX - 1; i >= Constants.COMPRESS_MIN; --i) {
             start(i);
         }
-    //    System.out.println(System.currentTimeMillis());
         test();
+    }
+
+    public Overlap[] getResult () {
+        return busy;// 1175
     }
 
     private void start(int howMuch) {
         for (int i = 0; i < length; ++i) {
+            if (i > 0 && busy[i - 1] != null) {
+                --i;
+            }
+            i = getStartIndex(howMuch, i);
+
+            if (i == -1) {
+                return ;
+            }
             search(i, howMuch);
         }
+    }
+
+    private int getStartIndex(int howMuch, int i) {
+        for (int k = i; k < howMuch + i && k < length; ++k) {
+            if (busy[k] != null) {
+                return getStartIndex(howMuch, busy[k].getEnd() + 1);
+            }
+        }
+
+        return i;
     }
 
     private void search(int i, int howMuch) {
@@ -51,37 +72,37 @@ public class Compressor {
 
             if (res == 0) {
                 includeItem(howMuch, j, i);
-                j += howMuch;
+                j += howMuch - 1;
             }
             else if (res > 0) {
-                j += res;
+                j += res - 1;
             }
         }
     }
 
     private int strstr(int mainBuf, int searchFrom, int howMuch) {
         for (int i = searchFrom, j = 0; i < searchFrom + howMuch && i < length; ++i, ++j) {
-            if (busy[i] != null || busy[j] != null) {
+            if (busy[i] != null) {
                 return busy[i].getEnd();
             }
             if (array[i] != array[mainBuf + j]) {
                 return -1;
             }
         }
-
         return 0;
     }
 
-    private void includeItem (int howMuch, int start, int mainStart) {
+    private void includeItem (int howMuch, int start, int parentStart) {
         Overlap element = new Overlap(start, start + howMuch);
-        LinkedList <LinkedList<Overlap>> pointer = overlap.get(howMuch);
-        Iterator <LinkedList<Overlap>> iter = pointer.iterator();
+        Overlap parentElement = new Overlap(parentStart, parentStart + howMuch);
 
-        while (iter.hasNext()) {
-            LinkedList<Overlap> item = iter.next();
+        LinkedList <LinkedList<Overlap>> pointer = overlap.get(howMuch);
+
+        for (LinkedList<Overlap> item : pointer) {
             Overlap lap = item != null && !item.isEmpty() ? item.getFirst() : null;
 
-            if (lap != null && Arrays.equals(array, start, start + howMuch, array, lap.getStart(), lap.getEnd())) {
+            if (lap != null && equalsBytes(start, lap.getStart(), howMuch)) {
+                item.add(parentElement);
                 item.add(element);
                 element.setAddress(lap.getStart());
                 busy[element.getStart()] = element;
@@ -91,20 +112,33 @@ public class Compressor {
         }
 
         LinkedList<Overlap> newElement = new LinkedList();
+        newElement.addFirst(parentElement);
         newElement.add(element);
+        element.setAddress(parentElement.getStart());
 
         pointer.add(newElement);
         busy[element.getStart()] = element;
+        busy[parentElement.getStart()] = parentElement;
+    }
+
+    public boolean equalsBytes(int start, int parentStart, int howMuch) {
+        for (int i = 0; i < howMuch; ++i) {
+            if (array[start + i] != array[parentStart + i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void test () {
         for (int i = 0; i < busy.length; i++) {
             if (busy[i] != null) {
-                System.out.println(busy[i].getStart() + " --- " + busy[i].getEnd() + " === " + (busy[i].getEnd() - busy[i].getStart()));
+                System.out.println(busy[i].getStart() + " --- " + busy[i].getEnd() + " === " + (busy[i].getEnd() - busy[i].getStart()) + " RELATION " + busy[i].getAddress());
             }
         }
-//        System.out.println("--\n\n\n--");
+        System.out.println("--\n\n\n--");
 //        int counter;
+
 //        for (int i = 0; i < Constants.COMPRESS_MAX; ++i) {
 //            LinkedList <LinkedList<Overlap>> pointer = overlap.get(i);
 //
@@ -119,7 +153,7 @@ public class Compressor {
 //                    while (lala.hasNext()) {
 //                        Overlap aa = lala.next();
 //
-//                        System.out.println("Start= " + aa.getStart() + " -- End= " + aa.getEnd() + " -- Index " + i + " -- Counter= " + counter);
+//                        System.out.println("Start= " + aa.getStart() + " -- End= " + aa.getEnd() + " -- Index " + i + " -- Counter= " + counter + " RELATION " + aa.getAddress());
 //                    }
 //                }
 //                ++counter;
