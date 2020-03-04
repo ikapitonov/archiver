@@ -2,6 +2,7 @@ package ru.archiver.compression;
 
 import ru.archiver.compression.utils.Helpers;
 import ru.archiver.compression.utils.Overlap;
+import ru.archiver.compression.utils.ResultCompression;
 import ru.archiver.config.Constants;
 
 public class Squeezing {
@@ -28,7 +29,7 @@ public class Squeezing {
 
             if (res == 0) {
                 insertOverlap(i);
-                i += overlap[i].getEnd() - 1;
+                i = overlap[i].getEnd() - 1;
             }
             else {
                 insertEmptyBytes(i, res);
@@ -37,10 +38,14 @@ public class Squeezing {
         }
     }
 
+    public ResultCompression getResult() {
+        return new ResultCompression(result, index);
+    }
+
     private int getEmptyBytes(int start) {
         int i = 0;
 
-        while (i < length && i < Constants.MAX_BYTE && overlap[i + start] == null) {
+        while (i + start < length && i < Constants.MAX_BYTE && overlap[i + start] == null) {
             ++i;
         }
         return i;
@@ -81,7 +86,6 @@ public class Squeezing {
                 result[i] = tmp[j];
                 ++i;
             }
-
             this.index = i;
         }
         else {
@@ -100,6 +104,6 @@ public class Squeezing {
     private int recursiveSearch(int address) {
         int currentAddress = overlap[address].getAddress();
 
-        return currentAddress != -1 ? recursiveSearch(currentAddress) : currentAddress;
+        return currentAddress != -1 ? recursiveSearch(currentAddress) : overlap[address].getStart();
     }
 }

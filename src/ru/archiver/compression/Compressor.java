@@ -38,8 +38,9 @@ public class Compressor {
 
         Overlap[] over = getResult();
 
-        testPovtor(over);
-        testPovtorShow(over);
+        //       test();
+//        testPovtor(over);
+//        testPovtorShow(over);
     }
 
     public Overlap[] getResult () {
