@@ -9,16 +9,17 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Compressor {
-    private ArrayList <LinkedList <LinkedList<Overlap>>> overlap;
-    private Overlap[] busy;
-    private byte[] array;
-    private int length;
+    private final byte[] array;
+    private final int length;
 
-    public Compressor(byte[] array, int length) {
+    private ArrayList <LinkedList <LinkedList<Overlap>>> overlap;
+    private boolean[] busy;
+
+    public Compressor(final byte[] array, final int length) {
         this.array = array;
         this.length = length;
 
-        busy = new Overlap[length];
+        busy = new boolean[length];
         overlap = new ArrayList(Constants.COMPRESS_MAX);
 
         for (int i = 0; i < Constants.COMPRESS_MAX; ++i) {
@@ -33,21 +34,44 @@ public class Compressor {
         for (int i = Constants.COMPRESS_MAX - 1; i >= Constants.COMPRESS_MIN; --i) {
             start(i);
         }
-        test();
+     //   test();
+
+        Overlap[] over = getResult();
+
+        testPovtor(over);
+        testPovtorShow(over);
     }
 
     public Overlap[] getResult () {
-        return busy;// 1175
+        Overlap[] result = new Overlap[length];
+
+        for (int i = 0; i < Constants.COMPRESS_MAX; ++i) {
+            LinkedList <LinkedList<Overlap>> pointer = overlap.get(i);
+
+            Iterator <LinkedList<Overlap>> iter = pointer.iterator();
+            while (iter.hasNext()) {
+                LinkedList<Overlap> item = iter.next();
+
+                if (!item.isEmpty()) {
+                    Iterator <Overlap> iterator = item.iterator();
+
+                    while (iterator.hasNext()) {
+                        Overlap over = iterator.next();
+
+                        result[over.getStart()] = over;
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     private void start(int howMuch) {
         for (int i = 0; i < length; ++i) {
-            if (i > 0 && busy[i - 1] != null) {
-                --i;
-            }
             i = getStartIndex(howMuch, i);
 
-            if (i == -1) {
+            if (i >= length - howMuch) {
                 return ;
             }
             search(i, howMuch);
@@ -55,9 +79,12 @@ public class Compressor {
     }
 
     private int getStartIndex(int howMuch, int i) {
-        for (int k = i; k < howMuch + i && k < length; ++k) {
-            if (busy[k] != null) {
-                return getStartIndex(howMuch, busy[k].getEnd() + 1);
+        for (int k = i; k < howMuch + i && k < length - howMuch; ++k) {
+            if (busy[k]) {
+                while (busy[k]) {
+                    ++k;
+                }
+                return getStartIndex(howMuch, k);
             }
         }
 
@@ -65,31 +92,22 @@ public class Compressor {
     }
 
     private void search(int i, int howMuch) {
-        int res;
-
-        for (int j = i + howMuch; j < length - howMuch; ++j) {
-            res = strstr(i, j, howMuch);
-
-            if (res == 0) {
+        for (int j = i + howMuch; j < length - howMuch; ++j)
+        {
+            if (strstr(i, j, howMuch)) {
                 includeItem(howMuch, j, i);
                 j += howMuch - 1;
-            }
-            else if (res > 0) {
-                j += res - 1;
             }
         }
     }
 
-    private int strstr(int mainBuf, int searchFrom, int howMuch) {
+    private boolean strstr(int mainBuf, int searchFrom, int howMuch) {
         for (int i = searchFrom, j = 0; i < searchFrom + howMuch && i < length; ++i, ++j) {
-            if (busy[i] != null) {
-                return busy[i].getEnd();
-            }
-            if (array[i] != array[mainBuf + j]) {
-                return -1;
+            if (array[i] != array[mainBuf + j] || busy[i]) {
+                return false;
             }
         }
-        return 0;
+        return true;
     }
 
     private void includeItem (int howMuch, int start, int parentStart) {
@@ -102,10 +120,9 @@ public class Compressor {
             Overlap lap = item != null && !item.isEmpty() ? item.getFirst() : null;
 
             if (lap != null && equalsBytes(start, lap.getStart(), howMuch)) {
-                item.add(parentElement);
                 item.add(element);
                 element.setAddress(lap.getStart());
-                busy[element.getStart()] = element;
+                setBusy(element.getStart(), element.getEnd());
 
                 return ;
             }
@@ -117,11 +134,17 @@ public class Compressor {
         element.setAddress(parentElement.getStart());
 
         pointer.add(newElement);
-        busy[element.getStart()] = element;
-        busy[parentElement.getStart()] = parentElement;
+        setBusy(element.getStart(), element.getEnd());
+        setBusy(parentElement.getStart(), parentElement.getEnd());
     }
 
-    public boolean equalsBytes(int start, int parentStart, int howMuch) {
+    private void setBusy(int start, int end) {
+        for (int i = start; i < end; i++) {
+            busy[i] = true;
+        }
+    }
+
+    private boolean equalsBytes(int start, int parentStart, int howMuch) {
         for (int i = 0; i < howMuch; ++i) {
             if (array[start + i] != array[parentStart + i]) {
                 return false;
@@ -131,33 +154,49 @@ public class Compressor {
     }
 
     private void test () {
-        for (int i = 0; i < busy.length; i++) {
-            if (busy[i] != null) {
-                System.out.println(busy[i].getStart() + " --- " + busy[i].getEnd() + " === " + (busy[i].getEnd() - busy[i].getStart()) + " RELATION " + busy[i].getAddress());
+        System.out.println("--\n\n\n--");
+        int counter;
+
+        for (int i = 0; i < Constants.COMPRESS_MAX; ++i) {
+            LinkedList <LinkedList<Overlap>> pointer = overlap.get(i);
+
+            Iterator <LinkedList<Overlap>> iter = pointer.iterator();
+            counter = 0;
+            while (iter.hasNext()) {
+                LinkedList<Overlap> item = iter.next();
+
+                if (!item.isEmpty()) {
+                    Iterator <Overlap> lala = item.iterator();
+
+                    while (lala.hasNext()) {
+                        Overlap aa = lala.next();
+
+                        System.out.println("Start= " + aa.getStart() + " -- End= " + aa.getEnd() + " -- Index " + i + " -- Counter= " + counter + " RELATION " + aa.getAddress());
+                    }
+                }
+                ++counter;
             }
         }
-        System.out.println("--\n\n\n--");
-//        int counter;
+    }
 
-//        for (int i = 0; i < Constants.COMPRESS_MAX; ++i) {
-//            LinkedList <LinkedList<Overlap>> pointer = overlap.get(i);
-//
-//            Iterator <LinkedList<Overlap>> iter = pointer.iterator();
-//            counter = 0;
-//            while (iter.hasNext()) {
-//                LinkedList<Overlap> item = iter.next();
-//
-//                if (!item.isEmpty()) {
-//                    Iterator <Overlap> lala = item.iterator();
-//
-//                    while (lala.hasNext()) {
-//                        Overlap aa = lala.next();
-//
-//                        System.out.println("Start= " + aa.getStart() + " -- End= " + aa.getEnd() + " -- Index " + i + " -- Counter= " + counter + " RELATION " + aa.getAddress());
-//                    }
-//                }
-//                ++counter;
-//            }
-//        }
+    private void testPovtor (Overlap[] over) {
+        for (int i = 0; i < length; i++) {
+            if (over[i] != null) {
+
+                for (int j = over[i].getStart() + 1; j < over[i].getEnd(); j++) {
+                    if (over[j] != null) {
+                        System.out.println("ERROR " + over[j].getStart());
+                    }
+                }
+            }
+        }
+    }
+
+    private void testPovtorShow(Overlap[] over) {
+        for (int i = 0; i < over.length; i++) {
+            if (over[i] != null) {
+                System.out.println(over[i].getStart() + " --- " + over[i].getEnd() + " === " + (over[i].getEnd() - over[i].getStart()) + " RELATION " + over[i].getAddress());
+            }
+        }
     }
 }
