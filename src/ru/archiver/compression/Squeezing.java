@@ -80,9 +80,9 @@ public class Squeezing {
             result[i] = info;
             ++i;
 
-            tmp = Helpers.getBytesFromInt(url);
+            tmp = Helpers.getBytesFromInt((short) url);
 
-            for (int j = 0; j < 4; ++j) {
+            for (int j = 0; j < 2; ++j) {
                 result[i] = tmp[j];
                 ++i;
             }
