@@ -4,6 +4,7 @@ import ru.archiver.compression.Compressor;
 import ru.archiver.compression.Squeezing;
 import ru.archiver.compression.utils.Helpers;
 import ru.archiver.compression.utils.ResultCompression;
+import ru.archiver.config.Constants;
 import ru.archiver.unpack.Unpack;
 
 import java.io.BufferedOutputStream;
@@ -15,23 +16,23 @@ public class Main {
 
     public static void main (String[] argc) {
 
-        if (argc.length == 0) {
+        if (argc.length > 0) {
             unpack();
             return ;
         }
 
         try {
-            File file = new File("/Users/matruman/Desktop/ft_strsplit.c");
+            File file = new File("/Users/sjamie/Desktop/push_swap.zip");
 
             byte[] bytes = new byte[(int) file.length()];
 
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(bytes);
             fileInputStream.close();
-            Compressor compressor = new Compressor(bytes, (int) file.length());
+            Compressor compressor = new Compressor(bytes, Constants.MAX_BUFFER);
             compressor.run();
 
-            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes,(int) file.length());
+            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes, Constants.MAX_BUFFER);
             squeezing.run();
             ResultCompression result =  squeezing.getResult();
 
