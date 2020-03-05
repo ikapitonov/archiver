@@ -2,7 +2,9 @@ package ru.archiver;
 
 import ru.archiver.compression.Compressor;
 import ru.archiver.compression.Squeezing;
+import ru.archiver.compression.utils.Helpers;
 import ru.archiver.compression.utils.ResultCompression;
+import ru.archiver.unpack.Unpack;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -12,18 +14,24 @@ import java.io.FileOutputStream;
 public class Main {
 
     public static void main (String[] argc) {
+
+        if (argc.length == 0) {
+            unpack();
+            return ;
+        }
+
         try {
-            File file = new File("/Users/sjamie/Desktop/tmp/Compressor_old.java");
+            File file = new File("/Users/matruman/Desktop/ft_strsplit.c");
 
             byte[] bytes = new byte[(int) file.length()];
 
             FileInputStream fileInputStream = new FileInputStream(file);
             fileInputStream.read(bytes);
             fileInputStream.close();
-            Compressor compressor = new Compressor(bytes, 4096);
+            Compressor compressor = new Compressor(bytes, (int) file.length());
             compressor.run();
 
-            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes,4096);
+            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes,(int) file.length());
             squeezing.run();
             ResultCompression result =  squeezing.getResult();
 
@@ -35,7 +43,10 @@ public class Main {
                 FileOutputStream fos = new FileOutputStream(fileW);
                 bos = new BufferedOutputStream(fos);
                 bos.write("text.txt\n".getBytes());
-                bos.write(result.getLenght());
+                for (int i = 0; i < 3; i++) {
+                    bos.write(0);
+                } bos.write(1);
+                bos.write(Helpers.getBytesFromInt2(result.getLenght()));
                 bos.write(result.getArray(), 0, result.getLenght());
             }finally {
                 if(bos != null) {
@@ -48,6 +59,18 @@ public class Main {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void unpack () {
+        try {
+            File file = new File("/Users/matruman/Desktop/text.txt");
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            new Unpack(fileInputStream).run();
+        }
+        catch (Exception e){
             e.printStackTrace();
         }
     }

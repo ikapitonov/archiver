@@ -36,11 +36,11 @@ public class Compressor {
         }
      //   test();
 
-        Overlap[] over = getResult();
+     //   Overlap[] over = getResult();
 
         //       test();
 //        testPovtor(over);
-//        testPovtorShow(over);
+     //   testPovtorShow(over);
     }
 
     public Overlap[] getResult () {
@@ -64,8 +64,45 @@ public class Compressor {
                 }
             }
         }
+        setNewIndexes(result);
 
         return result;
+    }
+
+    private int getEmptyLenght(int start, Overlap[] overlaps) {
+        int i = 0;
+
+        while (i + start < length && overlaps[i + start] == null) {
+            ++i;
+        }
+        return i;
+    }
+
+    private void setNewIndexes(Overlap[] overlaps) {
+        int shift = 0;
+        int tmp;
+
+        for (int i = 0; i < length; i++) {
+            if (overlaps[i] == null) {
+                tmp = getEmptyLenght(i, overlaps);
+                i += tmp - 1;
+                shift += tmp % Constants.MAX_BYTE > 0 ? tmp / Constants.MAX_BYTE + 1 : tmp / Constants.MAX_BYTE;
+                shift += tmp;
+            }
+            else if (overlaps[i] != null && overlaps[i].getAddress() != -1) {
+                shift += 1 + Constants.LENGTH_ADDRESS;
+                i = overlaps[i].getEnd() - 1;
+            }
+            else if (overlaps[i] != null && overlaps[i].getAddress() == -1) {
+                overlaps[i].setNewStart(shift + 1);
+                System.out.println(shift + 1);
+                shift += 1 + (overlaps[i].getEnd() - overlaps[i].getStart());
+                i = overlaps[i].getEnd() - 1;
+            }
+            else {
+                System.out.println("ERRRRRRROOOOOORRR");
+            }
+        }
     }
 
     private void start(int howMuch) {

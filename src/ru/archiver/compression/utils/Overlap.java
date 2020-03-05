@@ -4,6 +4,7 @@ public class Overlap {
     private int start;
     private int end;
     private int address = -1;
+    private int newStart;
 
     public Overlap(int start, int end) {
         this.start = start;
@@ -19,7 +20,7 @@ public class Overlap {
     }
 
     public int getEnd() {
-        return end;
+            return end;
     }
 
     public void setEnd(int end) {
@@ -32,5 +33,13 @@ public class Overlap {
 
     public void setAddress(int address) {
         this.address = address;
+    }
+
+    public int getNewStart() {
+        return newStart;
+    }
+
+    public void setNewStart(int newStart) {
+        this.newStart = newStart;
     }
 }

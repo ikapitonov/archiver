@@ -58,7 +58,7 @@ public class Squeezing {
         result[i] = info;
         ++i;
 
-        for (int j = indexOfArray; j < howMuch; j++) {
+        for (int j = indexOfArray; j < indexOfArray + howMuch; j++) {
             result[i] = array[j];
             ++i;
         }
@@ -82,9 +82,9 @@ public class Squeezing {
 
             tmp = Helpers.getBytesFromInt((short) url);
 
-            for (int j = 0; j < 2; ++j) {
+            for (int j = 0; j < 2; j++) {
                 result[i] = tmp[j];
-                ++i;
+                i++;
             }
             this.index = i;
         }
@@ -104,6 +104,6 @@ public class Squeezing {
     private int recursiveSearch(int address) {
         int currentAddress = overlap[address].getAddress();
 
-        return currentAddress != -1 ? recursiveSearch(currentAddress) : overlap[address].getStart();
+        return currentAddress != -1 ? recursiveSearch(currentAddress) : overlap[address].getNewStart();
     }
 }
