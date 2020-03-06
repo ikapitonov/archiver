@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Unpack {
 
@@ -23,12 +22,12 @@ public class Unpack {
 
     public void run() {
 
-        int length;
-        boolean flag = true;
         String name;
 
-        while ((name = getName(inputStream)) != null)
+        while ((name = getName(inputStream)) != null) {
+            System.out.println(name);
             readFile(name);
+        }
         for (Output file : files) {
             writeFile(file);
         }
@@ -41,6 +40,7 @@ public class Unpack {
         files.add(file);
 
         int countBlocks = readInt(inputStream);
+        System.out.println("cbl    " + countBlocks);
         if (countBlocks < 0)
         {
             System.out.println("countBlocks < 0");
@@ -51,6 +51,7 @@ public class Unpack {
             ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFF_SIZE);
             file.buffers.add(buffer);
             int size = readInt(inputStream);
+            System.out.println("-----    " + size);
             if (size > Constants.BUFF_SIZE)
             {
                 System.out.printf("Size = %d > BUFF_SIZE\n", size);
@@ -70,7 +71,6 @@ public class Unpack {
 
         while (pos < size)
         {
-//            System.out.printf("pos: %d, buff[pos]: %d\n", pos, buff[pos]);
             if (buff[pos] > 0)
             {
                 buffer.put(buff, pos + 1, buff[pos]);
@@ -86,19 +86,14 @@ public class Unpack {
                     System.exit(0);
                 }
                 buffer.put(buff, addr, -buff[pos]);
-//                for (int i = 0; i < -buff[pos]; i++) {
-//                    System.out.printf("%c", buff[addr + i]);
-//                }
-//                System.out.print(new String(buffer.array()));
                 pos += 3;
             }
-
         }
     }
 
     private void writeFile(Output file) {
 
-        File newFile = new File(file.name);
+        File newFile = new File("test.unpack/" + file.name);
         FileOutputStream out;
         try {
             newFile.createNewFile();
@@ -129,9 +124,6 @@ public class Unpack {
             System.exit(0);
         }
 
-//        for (byte b : arr)
-//            System.out.printf("%x\n", b);
-
         ByteBuffer buff = ByteBuffer.wrap(arr);
 
         int res = buff.getInt();
@@ -139,9 +131,23 @@ public class Unpack {
     }
 
     private int readShort(FileInputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream);
-        int num = scanner.nextInt();
-        return num;
+
+        byte[] arr = new byte[2];
+
+        try {
+            inputStream.read(arr);
+        }
+        catch (Exception e)
+        {
+            System.out.println("Cannot read int");
+            e.printStackTrace();
+            System.exit(0);
+        }
+
+        ByteBuffer buff = ByteBuffer.wrap(arr);
+
+        int res = buff.getShort();
+        return res;
     }
 
     private int read(FileInputStream in, byte[] buff, int size) {
@@ -169,8 +175,11 @@ public class Unpack {
 
     private String getName(FileInputStream in) {
 
-        byte[] str = new byte[9];
+        int len  = readShort(in);
+        if (len == 0)
+            return null;
         int count;
+        byte[] str = new byte[len];
 
         try {
             count = in.read(str);
@@ -181,7 +190,6 @@ public class Unpack {
             e.printStackTrace();
             System.exit(0);
         }
-        str[8] = 'x';
         return new String(str);
     }
 }

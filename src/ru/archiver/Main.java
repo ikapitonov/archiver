@@ -23,7 +23,7 @@ public class Main {
 //        }
 
         if (argc.length == 1 && !argc[0].equals("-all")) {
-            unpack();
+            unpack(argc);
         }
         else if (argc.length > 0) {
             new Pack(argc).run();
@@ -75,9 +75,9 @@ public class Main {
 //        }
     }
 
-    public static void unpack () {
+    public static void unpack (String[] args) {
         try {
-            File file = new File("/Users/matruman/Desktop/text.txt");
+            File file = new File(args[0]);
 
             FileInputStream fileInputStream = new FileInputStream(file);
             new Unpack(fileInputStream).run();

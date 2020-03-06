@@ -14,4 +14,5 @@ public class Constants {
     public final static String INVALIDE_UNPACKING = "Invalide pack";
     public final static String EMPTY_FILES_IN_DIR = "Empty dir";
     public final static String NOT_FOUNT_FILES_IN_ARGS = "NOT_FOUNT_FILES_IN_ARGS";
+    public final static String OPEN_ERROR = "Open file error";
 }
