@@ -16,11 +16,6 @@ public class Pack {
     }
 
     public void run () {
-        if (args.length == 0) {
-            System.out.println(Constants.INVALIDE_PACKING);
-            return ;
-        }
-
         if (args.length == 1 && args[0].equals("-all"))
         {
             if (!AddAllFiles(new File(Constants.PATH))) {

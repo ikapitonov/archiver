@@ -35,12 +35,21 @@ public class FileHandler {
         public void setBufferPiece(int index, int howMuch) {
             buffer[index] = new byte[howMuch];
         }
+
+        public void testBuf () {
+            System.out.println("BUF main " + buffer.length);
+            for (int i = 0; i < buffer.length; i++) {
+                System.out.println("BUF size " + buffer[i].length);
+            }
+        }
     }
 
 
     public void run () {
-        int res = Calc.byteBufferSize(fileInfo.getFile().length());
-        long counter;
+        long length = fileInfo.getFile().length();
+        int res = Calc.byteBufferSize(length);
+        long counter = 0;
+        int tmp;
 
         if (res == 0) {
             isEmpty = true;
@@ -48,11 +57,12 @@ public class FileHandler {
         }
         fileInfo.setBuffer(new byte[res][]);
 
-        for (int i = 0; i < res; i++) {
-//            fileInfo.setBuffer(fileInfo.getBuffer()[i][]);
-//
-//            counter;
+        for (int i = 0; i < res; ++i) {
+            tmp = Calc.byteBufferPiece(length, counter);
+            counter += tmp;
+            fileInfo.setBufferPiece(i, tmp);
         }
+        
     }
 
     public FileInfo getFileInfo() {

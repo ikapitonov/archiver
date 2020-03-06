@@ -5,6 +5,7 @@ import ru.archiver.compression.Squeezing;
 import ru.archiver.compression.utils.Helpers;
 import ru.archiver.compression.utils.ResultCompression;
 import ru.archiver.config.Constants;
+import ru.archiver.file.Pack;
 import ru.archiver.unpack.Unpack;
 
 import java.io.BufferedOutputStream;
@@ -16,52 +17,62 @@ public class Main {
 
     public static void main (String[] argc) {
 
-        if (argc.length > 0) {
+//        if (argc.length > 1) {
+//            unpack();
+//            return ;
+//        }
+
+        if (argc.length == 1 && !argc[0].equals("-all")) {
             unpack();
-            return ;
+        }
+        else if (argc.length > 0) {
+            new Pack(argc).run();
+        }
+        else {
+            System.out.println(Constants.INVALIDE_ARGS);
         }
 
-        try {
-            File file = new File("/Users/sjamie/Desktop/push_swap.zip");
-
-            byte[] bytes = new byte[(int) file.length()];
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-            fileInputStream.read(bytes);
-            fileInputStream.close();
-            Compressor compressor = new Compressor(bytes, Constants.MAX_BUFFER);
-            compressor.run();
-
-            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes, Constants.MAX_BUFFER);
-            squeezing.run();
-            ResultCompression result =  squeezing.getResult();
-
-
-            File fileW = new File("text.txt");
-            BufferedOutputStream bos = null;
-
-            try {
-                FileOutputStream fos = new FileOutputStream(fileW);
-                bos = new BufferedOutputStream(fos);
-                bos.write("text.txt\n".getBytes());
-                for (int i = 0; i < 3; i++) {
-                    bos.write(0);
-                } bos.write(1);
-                bos.write(Helpers.getBytesFromInt2(result.getLenght()));
-                bos.write(result.getArray(), 0, result.getLenght());
-            }finally {
-                if(bos != null) {
-                    try  {
-                        //flush and close the BufferedOutputStream
-                        bos.flush();
-                        bos.close();
-                    } catch(Exception e){}
-                }
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            File file = new File("/Users/sjamie/Desktop/push_swap.zip");
+//
+//            byte[] bytes = new byte[(int) file.length()];
+//
+//            FileInputStream fileInputStream = new FileInputStream(file);
+//            fileInputStream.read(bytes);
+//            fileInputStream.close();
+//            Compressor compressor = new Compressor(bytes, Constants.MAX_BUFFER);
+//            compressor.run();
+//
+//            Squeezing squeezing = new Squeezing(compressor.getResult(), bytes, Constants.MAX_BUFFER);
+//            squeezing.run();
+//            ResultCompression result =  squeezing.getResult();
+//
+//
+//            File fileW = new File("text.txt");
+//            BufferedOutputStream bos = null;
+//
+//            try {
+//                FileOutputStream fos = new FileOutputStream(fileW);
+//                bos = new BufferedOutputStream(fos);
+//                bos.write("text.txt\n".getBytes());
+//                for (int i = 0; i < 3; i++) {
+//                    bos.write(0);
+//                } bos.write(1);
+//                bos.write(Helpers.getBytesFromInt2(result.getLenght()));
+//                bos.write(result.getArray(), 0, result.getLenght());
+//            }finally {
+//                if(bos != null) {
+//                    try  {
+//                        //flush and close the BufferedOutputStream
+//                        bos.flush();
+//                        bos.close();
+//                    } catch(Exception e){}
+//                }
+//            }
+//        }
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public static void unpack () {
