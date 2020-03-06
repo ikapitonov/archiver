@@ -17,13 +17,9 @@ public class Main {
 
     public static void main (String[] argc) {
 
-//        if (argc.length > 1) {
-//            unpack();
-//            return ;
-//        }
 
-        if (argc.length == 1 && !argc[0].equals("-all")) {
-            unpack(argc);
+        if (argc.length == 1 && isUnpack(argc[0])) {
+           unpack(argc);
         }
         else if (argc.length > 0) {
             new Pack(argc).run();
@@ -73,6 +69,12 @@ public class Main {
 //        catch (Exception e) {
 //            e.printStackTrace();
 //        }
+    }
+
+    private static boolean isUnpack(String name) {
+        String[] arr = name.split("\\.", -1);
+
+        return arr.length < 2 ? false : arr[arr.length - 1].equals(Constants.FILE_EXTENSION);
     }
 
     public static void unpack (String[] args) {

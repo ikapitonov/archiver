@@ -6,13 +6,19 @@ public class Constants {
     public final static int MAX_BYTE = 127;
     public final static int BUFF_SIZE = 4096;
     public final static int LENGTH_ADDRESS = 2;
-    public final static int MAX_BUFFER = 4096;
 
-    public final static String PATH = System.getProperty("user.dir");
+    public final static int MAX_THREAD = 4;
 
+    public final static String PATH = "/Users/sjamie/Desktop/fillit/libft/"; // System.getProperty("user.dir"); //"/Users/sjamie/Desktop/tessst/";
+
+    public final static String INVALIDE_READ = "INVALIDE_READ_FILE";
     public final static String INVALIDE_ARGS = "INVALIDE_ARGS";
     public final static String INVALIDE_UNPACKING = "Invalide pack";
     public final static String EMPTY_FILES_IN_DIR = "Empty dir";
     public final static String NOT_FOUNT_FILES_IN_ARGS = "NOT_FOUNT_FILES_IN_ARGS";
+
     public final static String OPEN_ERROR = "Open file error";
+
+
+    public final static String FILE_EXTENSION = "compress";
 }

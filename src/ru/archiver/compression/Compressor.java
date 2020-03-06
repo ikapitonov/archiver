@@ -95,7 +95,6 @@ public class Compressor {
             }
             else if (overlaps[i] != null && overlaps[i].getAddress() == -1) {
                 overlaps[i].setNewStart(shift + 1);
-                System.out.println(shift + 1);
                 shift += 1 + (overlaps[i].getEnd() - overlaps[i].getStart());
                 i = overlaps[i].getEnd() - 1;
             }

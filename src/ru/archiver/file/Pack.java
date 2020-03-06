@@ -2,7 +2,9 @@ package ru.archiver.file;
 
 import ru.archiver.config.Constants;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -16,28 +18,43 @@ public class Pack {
     }
 
     public void run () {
-        if (args.length == 1 && args[0].equals("-all"))
-        {
+        if (args.length == 1 && args[0].equals("-all")) {
             if (!AddAllFiles(new File(Constants.PATH))) {
                 System.out.println(Constants.EMPTY_FILES_IN_DIR);
                 return ;
             }
-            startPacking();
         }
         else {
             if (!ReadAllFiles(args)) {
                 System.out.println(Constants.NOT_FOUNT_FILES_IN_ARGS);
                 return ;
             }
-            startPacking();
         }
+        startPacking();
     }
 
     private void startPacking() {
         Iterator<FileHandler> iterator = list.iterator();
-
-        while (iterator.hasNext()) {
-            iterator.next().run();
+        try {
+            File fileW = new File("text." + Constants.FILE_EXTENSION);
+            BufferedOutputStream bos = null;
+            FileOutputStream fos = new FileOutputStream(fileW);
+            bos = new BufferedOutputStream(fos);
+            while (iterator.hasNext()) {
+                iterator.next().run(bos);
+            }
+            if(bos != null) {
+                try  {
+                    bos.flush();
+                    bos.close();
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 
