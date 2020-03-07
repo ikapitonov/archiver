@@ -12,12 +12,12 @@ import java.util.LinkedList;
 public class Unpack {
 
     private FileInputStream inputStream;
-    private LinkedList<Output> files;
+    private ParallelUnpacker[] threads;
 
     public Unpack(FileInputStream inputStream) {
 
         this.inputStream = inputStream;
-        files = new LinkedList<>();
+        threads = new ParallelUnpacker[Constants.MAX_THREAD];
     }
 
     public void run() {
@@ -26,87 +26,19 @@ public class Unpack {
 
         while ((name = getName(inputStream)) != null) {
             System.out.println(name);
-            readFile(name);
-        }
-        for (Output file : files) {
-            writeFile(file);
-        }
-    }
-
-    private void readFile(String name) {
-
-        byte[] buff = new byte[Constants.BUFF_SIZE];
-        Output file  = new Output(name);
-        files.add(file);
-
-        int countBlocks = readInt(inputStream);
-        System.out.println("cbl    " + countBlocks);
-        if (countBlocks < 0)
-        {
-            System.out.println("countBlocks < 0");
-            System.exit(0);
-        }
-        for (int i = 0; i < countBlocks; i++) {
-
-            ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFF_SIZE);
-            file.buffers.add(buffer);
-            int size = readInt(inputStream);
-            System.out.println("-----    " + size);
-            if (size > Constants.BUFF_SIZE)
-            {
-                System.out.printf("Size = %d > BUFF_SIZE\n", size);
-                System.exit(0);
+            int countBlocks = readInt(inputStream);
+            SynchronizedIO synchronizedIO = new SynchronizedIO(inputStream, name, countBlocks);
+            for (int i = 0; i < Constants.MAX_THREAD; i++) {
+                threads[i] =  new ParallelUnpacker(synchronizedIO, i);
+                threads[i].start();
             }
-            Arrays.fill(buff, (byte) 0);
-            read(inputStream, buff, size);
-            readBlock(buff, buffer, size);
-            System.out.println("Hello");
-        }
-    }
-
-    private void readBlock(byte[] buff, ByteBuffer buffer, int size) {
-
-        int pos = 0;
-        int addr;
-
-        while (pos < size)
-        {
-            if (buff[pos] > 0)
-            {
-                buffer.put(buff, pos + 1, buff[pos]);
-                pos += buff[pos] + 1;
-            }
-            else
-            {
-                addr = getAddr(buff, pos + 1);
-                System.out.printf("addr: %d, pos: %d, buff[pos]: %d\n", addr, pos, buff[pos]);
-                if (addr < 0 || addr > Constants.BUFF_SIZE)
-                {
-                    System.out.printf("Invalid addr: %d\n pos: %d\n", addr, pos);
-                    System.exit(0);
+            for (int i = 0; i < Constants.MAX_THREAD; i++) {
+                try {
+                    threads[i].join();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                buffer.put(buff, addr, -buff[pos]);
-                pos += 3;
             }
-        }
-    }
-
-    private void writeFile(Output file) {
-
-        File newFile = new File("test.unpack/" + file.name);
-        FileOutputStream out;
-        try {
-            newFile.createNewFile();
-            out = new FileOutputStream(newFile);
-
-            for (ByteBuffer buffer : file.buffers) {
-
-                out.write(buffer.array(), 0, buffer.position());
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
         }
     }
 
@@ -147,29 +79,6 @@ public class Unpack {
         ByteBuffer buff = ByteBuffer.wrap(arr);
 
         int res = buff.getShort();
-        return res;
-    }
-
-    private int read(FileInputStream in, byte[] buff, int size) {
-
-        int ret;
-
-        try {
-            ret = in.read(buff, 0, size);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-        return ret;
-    }
-
-    private int getAddr(byte arr[], int pos) {
-
-        ByteBuffer buffer = ByteBuffer.allocate(2);
-        buffer.put(arr, pos, 2);
-
-        int res = buffer.getShort(0);
         return res;
     }
 

@@ -9,7 +9,7 @@ public class Constants {
 
     public final static int MAX_THREAD = 4;
 
-    public final static String PATH = "/Users/sjamie/Desktop/fillit/libft/"; // System.getProperty("user.dir"); //"/Users/sjamie/Desktop/tessst/";
+    public final static String PATH = "/Users/matruman/Desktop/arh/test.unpack"; // System.getProperty("user.dir"); //"/Users/sjamie/Desktop/tessst/";
 
     public final static String INVALIDE_READ = "INVALIDE_READ_FILE";
     public final static String INVALIDE_ARGS = "INVALIDE_ARGS";
