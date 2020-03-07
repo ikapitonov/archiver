@@ -40,10 +40,13 @@ public class Pack {
             BufferedOutputStream bos = null;
             FileOutputStream fos = new FileOutputStream(fileW);
             bos = new BufferedOutputStream(fos);
-            while (iterator.hasNext()) {
-                iterator.next().run(bos);
-            }
+
             if(bos != null) {
+
+                while (iterator.hasNext()) {
+                    iterator.next().run(bos);
+                }
+
                 try  {
                     bos.flush();
                     bos.close();
@@ -65,7 +68,7 @@ public class Pack {
         for (int i = 0; i < filenames.length; i++) {
             file = new File(filenames[i]);
 
-            if (file.isFile()) {
+            if (file.isFile() && ((int) file.length() < Constants.FILE_MAX_LENGTH)) {
                 list.add(new FileHandler(file));
                 ++counter;
             }

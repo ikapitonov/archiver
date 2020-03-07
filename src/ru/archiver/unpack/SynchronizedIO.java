@@ -39,7 +39,7 @@ public class SynchronizedIO {
     }
 
     public synchronized int read(int id, int previous, byte[] buff) {
-        System.out.println(">> " + id);
+
         while (lastReadUser != previous) {
             try {
                 wait();
@@ -56,23 +56,9 @@ public class SynchronizedIO {
             return 0;
         }
 
-        byte[] arr = new byte[4];
-        try {
-            inputStream.read(arr);
-        }
-        catch (Exception e)
-        {
-            System.out.println("Cannot read int");
-            e.printStackTrace();
-            System.exit(0);
-        }
-        System.out.println(id);
-
-        ByteBuffer buffer = ByteBuffer.wrap(arr);
-
         int ret;
         try {
-            ret = inputStream.read(buff, 0, buffer.getInt(0));
+            ret = inputStream.read(buff, 0, Unpack.readInt(inputStream));
             blocksCount--;
         }
         catch (Exception e) {
@@ -85,7 +71,6 @@ public class SynchronizedIO {
             lastWriter = id;
 
         lastReadUser = id;
-        System.out.println("lu: " + lastReadUser);
         notifyAll();
         return ret;
     }
@@ -101,7 +86,6 @@ public class SynchronizedIO {
                 System.exit(0);
             }
         }
-        //System.out.println("---" + id);
         bufferArray[id] = buffer;
         if ((blocksCount != 0 && !start && id == Constants.MAX_THREAD - 1) ||
             blocksCount == 0 && id == lastWriter)

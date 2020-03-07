@@ -2,12 +2,9 @@ package ru.archiver.unpack;
 
 import ru.archiver.config.Constants;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.LinkedList;
+
 
 public class Unpack {
 
@@ -42,7 +39,7 @@ public class Unpack {
         }
     }
 
-    private int readInt(FileInputStream inputStream) {
+    public static int readInt(FileInputStream inputStream) {
 
         byte[] arr = new byte[4];
 
@@ -62,7 +59,7 @@ public class Unpack {
         return res;
     }
 
-    private int readShort(FileInputStream inputStream) {
+    public static int readShort(FileInputStream inputStream) {
 
         byte[] arr = new byte[2];
 

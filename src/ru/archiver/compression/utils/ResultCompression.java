@@ -1,20 +1,20 @@
 package ru.archiver.compression.utils;
 
 public class ResultCompression {
-    private int lenght;
+    private int length;
     private byte[] array;
 
-    public ResultCompression(byte[] array, int lenght) {
-        this.lenght = lenght;
+    public ResultCompression(byte[] array, int length) {
+        this.length = length;
         this.array = array;
     }
 
     public int getLenght() {
-        return lenght;
+        return length;
     }
 
     public void setLenght(int lenght) {
-        this.lenght = lenght;
+        this.length = lenght;
     }
 
     public byte[] getArray() {
