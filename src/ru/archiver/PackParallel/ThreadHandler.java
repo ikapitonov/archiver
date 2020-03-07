@@ -26,7 +26,7 @@ public class ThreadHandler {
             }
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println(Constants.FATAL_ERROR);
             System.exit(1);
         }
     }

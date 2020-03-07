@@ -21,13 +21,13 @@ public class Pack {
         if (args.length == 1 && args[0].equals("-all")) {
             if (!AddAllFiles(new File(Constants.PATH))) {
                 System.out.println(Constants.EMPTY_FILES_IN_DIR);
-                return ;
+                System.exit(1);
             }
         }
         else {
             if (!ReadAllFiles(args)) {
                 System.out.println(Constants.NOT_FOUNT_FILES_IN_ARGS);
-                return ;
+                System.exit(1);
             }
         }
         startPacking();
@@ -35,28 +35,42 @@ public class Pack {
 
     private void startPacking() {
         Iterator<FileHandler> iterator = list.iterator();
+        int counter = 0;
+
         try {
-            File fileW = new File("text." + Constants.FILE_EXTENSION);
-            BufferedOutputStream bos = null;
+            File fileW = new File(Constants.FILE_NAME + "." + Constants.FILE_EXTENSION);
+            BufferedOutputStream bos;
             FileOutputStream fos = new FileOutputStream(fileW);
             bos = new BufferedOutputStream(fos);
 
-            if(bos != null) {
+            if (bos != null) {
 
                 while (iterator.hasNext()) {
-                    iterator.next().run(bos);
+                    if (!iterator.next().run(bos))
+                        ++counter;
+                }
+
+                if (counter == list.size()) {
+                    System.out.println("\n" + Constants.INVALIDE_PACK);
+                    System.exit(1);
                 }
 
                 try  {
                     bos.flush();
                     bos.close();
-                } catch(Exception e){
-                    e.printStackTrace();
                 }
+                catch(Exception e) {
+                    System.out.println(Constants.FATAL_ERROR);
+                    System.exit(1);
+                }
+            }
+            else {
+                System.out.println(Constants.FATAL_ERROR);
+                System.exit(1);
             }
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(Constants.FATAL_ERROR);
             System.exit(1);
         }
     }
@@ -68,9 +82,15 @@ public class Pack {
         for (int i = 0; i < filenames.length; i++) {
             file = new File(filenames[i]);
 
-            if (file.isFile() && ((int) file.length() < Constants.FILE_MAX_LENGTH)) {
+            if (file.isFile()) {
+                if (!validateFileSize(file))
+                    continue ;
+
                 list.add(new FileHandler(file));
                 ++counter;
+            }
+            else {
+                itsNotFilePrint(file);
             }
         }
 
@@ -83,13 +103,31 @@ public class Pack {
         final File files[] = folder.listFiles();
 
         for (final File file : files) {
-            if (file.isFile()) {
+            if (file.isFile() && validateFileSize(file)) {
+                if (!validateFileSize(file))
+                    continue ;
+
                 list.add(new FileHandler(file));
                 ++counter;
+            }
+            else {
+                itsNotFilePrint(file);
             }
         }
 
         this.count = counter;
         return count > 0;
+    }
+
+    private boolean validateFileSize(File file) {
+        if (!((int) file.length() < Constants.FILE_MAX_LENGTH)) {
+            System.out.println("Файл: " + file.getName() + " превышает максимальный допустимый размер: " + (Constants.FILE_MAX_LENGTH - 1));
+            return false;
+        }
+        return true;
+    }
+
+    private void itsNotFilePrint(File file) {
+        System.out.println(file.getName() + " не является файлом");
     }
 }

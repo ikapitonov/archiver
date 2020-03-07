@@ -10,7 +10,6 @@ import java.io.*;
 
 public class FileHandler {
     private final FileInfo fileInfo;
-    private boolean isEmpty = false;
     private BufferedOutputStream bos;
 
     public FileHandler(File file) {
@@ -72,6 +71,7 @@ public class FileHandler {
             }
         }
 
+        // test
         public  void testResult () {
             int tmp;
 
@@ -83,11 +83,7 @@ public class FileHandler {
         }
     }
 
-    public boolean isEmpty() {
-        return isEmpty;
-    }
-
-    public void run(BufferedOutputStream bos) {
+    public boolean run(BufferedOutputStream bos) {
         this.bos = bos;
         long length = fileInfo.getFileLen();
         int res = Calc.byteBufferSize(length);
@@ -95,8 +91,9 @@ public class FileHandler {
         int tmp;
 
         if (res == 0) {
-            isEmpty = true;
-            return ;
+            System.out.println("Пустой файл: " + fileInfo.getFileName());
+            writeInFile(true);
+            return true;
         }
         fileInfo.setBuffer(new byte[res][]);
 
@@ -110,31 +107,41 @@ public class FileHandler {
         }
         catch (IOException e) {
             System.out.println(Constants.INVALIDE_READ + " " + fileInfo.getFileName());
-            e.getMessage();
-            isEmpty = true;
-            return ;
+            return false;
         }
         fileInfo.initResultArray();
 
         new ThreadHandler(fileInfo).init();
 
-        writeInFile();
+        writeInFile(false);
+        return true;
     }
 
-    public void writeInFile () {
+    private void writeInFile (boolean isEmpty) {
         try {
             bos.write(Helpers.getBytesFromInt((short) (fileInfo.getFileName().length())));
             bos.write((fileInfo.getFileName()).getBytes());
-            bos.write(Helpers.getBytesFromInt2(fileInfo.getResults().length));
 
-            for (int index = 0; index < fileInfo.getResults().length; index++) {
-                bos.write(Helpers.getBytesFromInt2(fileInfo.getResults()[index].getLenght()));
+            if (isEmpty) {
+                bos.write(Helpers.getBytesFromInt2(0));
+            }
+            else {
+                bos.write(Helpers.getBytesFromInt2(fileInfo.getResults().length));
+            }
 
-                bos.write(fileInfo.getResults()[index].getArray(), 0 , fileInfo.getResults()[index].getLenght());
+            if (!isEmpty)
+            {
+                for (int index = 0; index < fileInfo.getResults().length; index++) {
+                    bos.write(Helpers.getBytesFromInt2(fileInfo.getResults()[index].getLenght()));
+
+                    bos.write(fileInfo.getResults()[index].getArray(), 0 , fileInfo.getResults()[index].getLenght());
+                }
             }
         }
         catch (Exception e) {
-            System.out.println("NO");
+            System.out.println(Constants.INVALIDE_WRITE);
+            System.out.println(Constants.FATAL_ERROR);
+            System.exit(1);
         }
     }
 
@@ -147,7 +154,7 @@ public class FileHandler {
         fileInputStream.close();
     }
 
-    public FileInfo getFileInfo() {
+    private FileInfo getFileInfo() {
         return fileInfo;
     }
 }

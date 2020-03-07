@@ -34,13 +34,14 @@ public class Compressor {
         for (int i = Constants.COMPRESS_MAX - 1; i >= Constants.COMPRESS_MIN; --i) {
             start(i);
         }
-     //   test();
 
-     //   Overlap[] over = getResult();
 
-        //       test();
+        // ТЕСТЫ
+//        Overlap[] over = getResult();
+//
+//        test();
 //        testPovtor(over);
-     //   testPovtorShow(over);
+//        testPovtorShow(over);
     }
 
     public Overlap[] getResult () {

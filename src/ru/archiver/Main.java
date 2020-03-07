@@ -1,17 +1,11 @@
 package ru.archiver;
 
-import ru.archiver.compression.Compressor;
-import ru.archiver.compression.Squeezing;
-import ru.archiver.compression.utils.Helpers;
-import ru.archiver.compression.utils.ResultCompression;
 import ru.archiver.config.Constants;
 import ru.archiver.file.Pack;
 import ru.archiver.unpack.Unpack;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -19,13 +13,22 @@ public class Main {
 
     public static void main(String[] argc) {
 
-
         if (argc.length == 1 && isUnpack(argc[0])) {
+            System.out.print("Начинаю распаковывать. Время: ");
+            printDate();
+
             unpack(argc);
+
+            System.out.print("Распаковка окончена. Время: ");
+            printDate();
         }
         else if (argc.length > 0) {
+            System.out.print("Начинаю сжимать. Время: ");
             printDate();
+
             new Pack(argc).run();
+
+            System.out.print("Сжатие окончено. Время: ");
             printDate();
         }
         else {
@@ -50,9 +53,9 @@ public class Main {
         }
     }
 
-    public static void printDate (){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now));
+    public static void printDate() {
+        DateTimeFormatter datef = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS");
+
+        System.out.println(datef.format(LocalDateTime.now()));
     }
 }
