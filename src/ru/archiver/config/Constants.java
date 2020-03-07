@@ -11,7 +11,7 @@ public class Constants {
 
     public final static int MAX_THREAD = 4;
 
-    public final static String PATH = "/Users/sjamie/Desktop/fillit/libft/11234/"; // System.getProperty("user.dir");
+    public final static String PATH = "/Users/sjamie/Desktop/fillit/libft/"; // System.getProperty("user.dir");
 
     public final static String INVALIDE_READ = "Не удалось считать из файла";
     public final static String INVALIDE_WRITE = "Не удается записать значение в файл";

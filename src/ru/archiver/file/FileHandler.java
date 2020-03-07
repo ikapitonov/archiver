@@ -22,11 +22,18 @@ public class FileHandler {
         private byte[][] buffer;
         private ResultCompression[] results;
         private long fileLen;
+        FileInputStream fileInputStream;
 
         public FileInfo (File file) {
             this.file = file;
             fileLen = file.length();
             fileName = file.getName();
+            try {
+                fileInputStream = new FileInputStream(file);
+            }
+            catch (Exception e) {
+                System.out.println("fdlsgkjklfgdfdgjkl");
+            }
         }
 
         public File getFile() {
@@ -71,6 +78,10 @@ public class FileHandler {
             }
         }
 
+        public FileInputStream getFileInputStream() {
+            return fileInputStream;
+        }
+
         // test
         public  void testResult () {
             int tmp;
@@ -101,13 +112,6 @@ public class FileHandler {
             tmp = Calc.byteBufferPiece(length, counter);
             counter += tmp;
             fileInfo.setBufferPiece(i, tmp);
-        }
-        try {
-            readFile();
-        }
-        catch (IOException e) {
-            System.out.println(Constants.INVALIDE_READ + " " + fileInfo.getFileName());
-            return false;
         }
         fileInfo.initResultArray();
 
@@ -143,15 +147,6 @@ public class FileHandler {
             System.out.println(Constants.FATAL_ERROR);
             System.exit(1);
         }
-    }
-
-    private void readFile() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(getFileInfo().getFile());
-
-        for (int i = 0; i < fileInfo.getBuffer().length; i++) {
-            fileInputStream.read(fileInfo.getBuffer()[i], 0, fileInfo.getBuffer()[i].length);
-        }
-        fileInputStream.close();
     }
 
     private FileInfo getFileInfo() {

@@ -4,18 +4,19 @@ import ru.archiver.config.Constants;
 import ru.archiver.file.FileHandler;
 
 public class ThreadHandler {
-    FileHandler.FileInfo fileInfo;
+    private Thread[] items;
+    private FileHandler.FileInfo fileInfo;
+    private int threadCount;
 
     public ThreadHandler(FileHandler.FileInfo fileInfo) {
         this.fileInfo = fileInfo;
+        threadCount = getCountThreads();
+        items = new Thread[threadCount];
     }
 
     public void init() {
-        int threadCount = getCountThreads();
-        Thread[] items = new Thread[threadCount];
-
         for (int i = 0; i < threadCount; i++) {
-            items[i] = new Thread(new ThreadItem(fileInfo, i));
+            items[i] = new Thread(new ThreadItem(fileInfo, i, items));
 
             items[i].start();
         }

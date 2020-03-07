@@ -83,7 +83,7 @@ public class Pack {
             file = new File(filenames[i]);
 
             if (file.isFile()) {
-                if (!validateFileSize(file))
+                if (!validateFileSize(file) || !validateReader(file))
                     continue ;
 
                 list.add(new FileHandler(file));
@@ -104,7 +104,7 @@ public class Pack {
 
         for (final File file : files) {
             if (file.isFile() && validateFileSize(file)) {
-                if (!validateFileSize(file))
+                if (!validateFileSize(file) || !validateReader(file))
                     continue ;
 
                 list.add(new FileHandler(file));
@@ -117,6 +117,15 @@ public class Pack {
 
         this.count = counter;
         return count > 0;
+    }
+
+    private boolean validateReader(File file) {
+        if (!file.canRead()) {
+            System.out.println("Файл: " + file.getName() + " нельзя считать. Проверьте chmod");
+
+            return false;
+        }
+        return true;
     }
 
     private boolean validateFileSize(File file) {
