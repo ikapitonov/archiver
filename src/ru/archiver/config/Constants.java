@@ -16,10 +16,11 @@ public class Constants {
     public final static String INVALIDE_READ = "INVALIDE_READ_FILE";
     public final static String INVALIDE_ARGS = "INVALIDE_ARGS";
     public final static String INVALIDE_UNPACKING = "Invalide pack";
+    public final static String INVALID_ARCHIVE = "Invalid archive file";
     public final static String EMPTY_FILES_IN_DIR = "Empty dir";
     public final static String NOT_FOUNT_FILES_IN_ARGS = "NOT_FOUNT_FILES_IN_ARGS";
 
-    public final static String OPEN_ERROR = "Open file error";
+    public final static String OPEN_ERROR = "Cannot open the file";
 
     public final static String FILE_EXTENSION = "compress";
 }
