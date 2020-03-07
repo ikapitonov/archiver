@@ -1,7 +1,6 @@
 package ru.archiver.file;
 
-import ru.archiver.compression.Compressor;
-import ru.archiver.compression.Squeezing;
+import ru.archiver.PackParallel.ThreadHandler;
 import ru.archiver.compression.utils.Helpers;
 import ru.archiver.compression.utils.ResultCompression;
 import ru.archiver.config.Constants;
@@ -23,9 +22,11 @@ public class FileHandler {
         private String fileName;
         private byte[][] buffer;
         private ResultCompression[] results;
+        private long fileLen;
 
         public FileInfo (File file) {
             this.file = file;
+            fileLen = file.length();
             fileName = file.getName();
         }
 
@@ -61,6 +62,16 @@ public class FileHandler {
             return fileName;
         }
 
+        public long getFileLen() {
+            return fileLen;
+        }
+
+        public void addResult(int index, ResultCompression result) {
+            synchronized (this) {
+                results[index] = result;
+            }
+        }
+
         public  void testResult () {
             int tmp;
 
@@ -78,7 +89,7 @@ public class FileHandler {
 
     public void run(BufferedOutputStream bos) {
         this.bos = bos;
-        long length = fileInfo.getFile().length();
+        long length = fileInfo.getFileLen();
         int res = Calc.byteBufferSize(length);
         long counter = 0;
         int tmp;
@@ -105,30 +116,9 @@ public class FileHandler {
         }
         fileInfo.initResultArray();
 
-        // начинаем параллелить
-        startThreading();
-    }
-
-    private void startThreading() {
-        ResultCompression[] res = fileInfo.getResults();
-        byte[][] buffer = fileInfo.getBuffer();
-        byte[] tmp;
-
-        for (int i = 0; i < buffer.length; i++) {
-            tmp = buffer[i];
-
-            Compressor compressor = new Compressor(tmp, tmp.length);
-            compressor.run();
-
-            Squeezing squeezing = new Squeezing(compressor.getResult(), tmp, tmp.length);
-            squeezing.run();
-            ResultCompression result =  squeezing.getResult();
-
-            fileInfo.getResults()[i] = result;
-        }
+        new ThreadHandler(fileInfo).init();
 
         writeInFile();
-     //   System.out.println("УСПЕШНО");
     }
 
     public void writeInFile () {

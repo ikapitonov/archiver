@@ -7,6 +7,8 @@ public class Constants {
     public final static int BUFF_SIZE = 4096;
     public final static int LENGTH_ADDRESS = 2;
 
+    public final static int FILE_MAX_LENGTH = 100001;
+
     public final static int MAX_THREAD = 4;
 
     public final static String PATH = "/Users/sjamie/Desktop/fillit/libft/"; // System.getProperty("user.dir"); //"/Users/sjamie/Desktop/tessst/";
@@ -18,7 +20,6 @@ public class Constants {
     public final static String NOT_FOUNT_FILES_IN_ARGS = "NOT_FOUNT_FILES_IN_ARGS";
 
     public final static String OPEN_ERROR = "Open file error";
-
 
     public final static String FILE_EXTENSION = "compress";
 }
