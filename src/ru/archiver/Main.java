@@ -15,17 +15,13 @@ public class Main {
     public static void main(String[] argc) {
 
         if (argc.length == 1 && isUnpack(argc[0])) {
-<<<<<<< HEAD
             System.out.print("Начинаю распаковывать. Время: ");
             printDate();
 
-            unpack(argc);
+            UnpackFileHandler.unpack(argc[0]);
 
             System.out.print("Распаковка окончена. Время: ");
             printDate();
-=======
-            UnpackFileHandler.unpack(argc[0]);
->>>>>>> matruman
         }
         else if (argc.length > 0) {
             System.out.print("Начинаю сжимать. Время: ");
@@ -47,27 +43,9 @@ public class Main {
         return arr.length < 2 ? false : arr[arr.length - 1].equals(Constants.FILE_EXTENSION);
     }
 
-<<<<<<< HEAD
-    public static void unpack(String[] args) {
-        try {
-            File file = new File(args[0]);
-
-            FileInputStream fileInputStream = new FileInputStream(file);
-            new Unpack(fileInputStream).run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public static void printDate() {
         DateTimeFormatter datef = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS");
 
         System.out.println(datef.format(LocalDateTime.now()));
-=======
-    public static void printDate (){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
-        LocalDateTime now = LocalDateTime.now();
-        System.out.println(dtf.format(now));
->>>>>>> matruman
     }
 }
