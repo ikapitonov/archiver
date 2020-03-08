@@ -22,7 +22,7 @@ public class Unpack {
         String name;
 
         while ((name = getName(inputStream)) != null) {
-            System.out.println(name);
+
             int countBlocks = readInt(inputStream);
             SynchronizedIO synchronizedIO = new SynchronizedIO(inputStream, name, countBlocks);
             for (int i = 0; i < Constants.MAX_THREAD; i++) {
@@ -68,7 +68,7 @@ public class Unpack {
         }
         catch (Exception e)
         {
-            System.out.println("Cannot read int");
+            System.out.println("Cannot read short");
             e.printStackTrace();
             System.exit(0);
         }
@@ -84,6 +84,11 @@ public class Unpack {
         int len  = readShort(in);
         if (len == 0)
             return null;
+        if (len < 0)
+        {
+            System.out.println(Constants.INVALID_ARCHIVE);
+            System.exit(0);
+        }
         int count;
         byte[] str = new byte[len];
 

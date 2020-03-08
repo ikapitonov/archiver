@@ -2,6 +2,7 @@ package ru.archiver;
 
 import ru.archiver.config.Constants;
 import ru.archiver.file.Pack;
+import ru.archiver.file.UnpackFileHandler;
 import ru.archiver.unpack.Unpack;
 
 import java.io.File;
@@ -14,6 +15,7 @@ public class Main {
     public static void main(String[] argc) {
 
         if (argc.length == 1 && isUnpack(argc[0])) {
+<<<<<<< HEAD
             System.out.print("Начинаю распаковывать. Время: ");
             printDate();
 
@@ -21,6 +23,9 @@ public class Main {
 
             System.out.print("Распаковка окончена. Время: ");
             printDate();
+=======
+            UnpackFileHandler.unpack(argc[0]);
+>>>>>>> matruman
         }
         else if (argc.length > 0) {
             System.out.print("Начинаю сжимать. Время: ");
@@ -42,6 +47,7 @@ public class Main {
         return arr.length < 2 ? false : arr[arr.length - 1].equals(Constants.FILE_EXTENSION);
     }
 
+<<<<<<< HEAD
     public static void unpack(String[] args) {
         try {
             File file = new File(args[0]);
@@ -57,5 +63,11 @@ public class Main {
         DateTimeFormatter datef = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss.SSS");
 
         System.out.println(datef.format(LocalDateTime.now()));
+=======
+    public static void printDate (){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
+        LocalDateTime now = LocalDateTime.now();
+        System.out.println(dtf.format(now));
+>>>>>>> matruman
     }
 }

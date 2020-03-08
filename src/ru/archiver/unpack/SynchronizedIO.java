@@ -13,18 +13,14 @@ public class SynchronizedIO {
     private FileInputStream inputStream;
     private FileOutputStream outputStream;
     private File file;
-    private ByteBuffer[] bufferArray;
     private volatile int lastReadUser;
     private volatile int lastWriteUser;
-    private int lastWriter;
     private int blocksCount;
-    private boolean start = true;
 
     public SynchronizedIO(FileInputStream inputStream, String name, int blocksCount)
     {
         this.inputStream = inputStream;
         this.file = new File("test.unpack/" + name);
-        this.bufferArray = new ByteBuffer[Constants.MAX_THREAD];
         lastReadUser = Constants.MAX_THREAD - 1;
         lastWriteUser = Constants.MAX_THREAD - 1;
         this.blocksCount = blocksCount;
@@ -67,9 +63,6 @@ public class SynchronizedIO {
             return  -1;
         }
 
-        if (blocksCount == 0)
-            lastWriter = id;
-
         lastReadUser = id;
         notifyAll();
         return ret;
@@ -86,22 +79,15 @@ public class SynchronizedIO {
                 System.exit(0);
             }
         }
-        bufferArray[id] = buffer;
-        if ((blocksCount != 0 && !start && id == Constants.MAX_THREAD - 1) ||
-            blocksCount == 0 && id == lastWriter)
-        {
-            int max = blocksCount > 0 ? Constants.MAX_THREAD : lastWriter + 1;
-            for (int i = 0; i < max; i++) {
-                try {
-                    outputStream.write(bufferArray[i].array(), 0, bufferArray[i].position());
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(0);
-                }
-            }
+
+        try {
+            outputStream.write(buffer.array(), 0, buffer.position());
         }
-        start = false;
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
+
         lastWriteUser = id;
         notifyAll();
     }
