@@ -70,7 +70,7 @@ public class Pack {
             }
         }
         catch (Exception e) {
-            System.out.println(Constants.FATAL_ERROR);
+            System.out.println(Constants.FATAL_ERROR + ". Возможно, файл уже существует");
             System.exit(1);
         }
     }
@@ -100,7 +100,13 @@ public class Pack {
 
     private boolean AddAllFiles (final File folder) {
         int counter = 0;
+
         final File files[] = folder.listFiles();
+
+        if (files == null) {
+            System.out.println(Constants.BAD_CHMOD_DIR);
+            System.exit(1);
+        }
 
         for (final File file : files) {
             if (file.isFile() && validateFileSize(file)) {

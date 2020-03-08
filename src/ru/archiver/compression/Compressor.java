@@ -4,7 +4,6 @@ import ru.archiver.compression.utils.Overlap;
 import ru.archiver.config.Constants;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 

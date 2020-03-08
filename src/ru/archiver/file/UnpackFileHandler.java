@@ -19,8 +19,11 @@ public class UnpackFileHandler {
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(Constants.OPEN_ERROR);
+                System.exit(1);
             }
-        } else
-            System.out.printf("%s is not a file", file.getName());
+        } else {
+            System.out.printf("%s не является файлом\n", file.getName());
+            System.exit(1);
+        }
     }
 }
