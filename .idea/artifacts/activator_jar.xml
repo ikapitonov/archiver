@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="activator:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/activator_jar</output-path>
+    <root id="archive" name="activator.jar">
+      <element id="module-output" name="activator" />
+    </root>
+  </artifact>
+</component>

@@ -22,10 +22,10 @@ public class ParallelUnpacker extends Thread {
     @Override
     public void run () {
 
-        buff = new byte[Constants.BUFF_SIZE];
+        buff = new byte[Constants.BUFF_SIZE_UNPACK];
 
         while ((size = synchronizedIO.read(unpackerID, previousID, buff)) > 0) {
-            ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFF_SIZE);
+            ByteBuffer buffer = ByteBuffer.allocate(Constants.BUFF_SIZE_UNPACK);
             readBlock(buffer);
             synchronizedIO.write(unpackerID, previousID, buffer);
             Arrays.fill(buff, (byte) 0);
@@ -47,8 +47,7 @@ public class ParallelUnpacker extends Thread {
             else
             {
                 addr = getAddr(buff, pos + 1);
-//                System.out.printf("addr: %d, pos: %d, buff[pos]: %d\n", addr, pos, buff[pos]);
-                if (addr < 0 || addr > Constants.BUFF_SIZE)
+                if (addr < 0 || addr > Constants.BUFF_SIZE_UNPACK)
                 {
                     System.out.printf("Invalid addr: %d\n pos: %d\n", addr, pos);
                     System.exit(0);
