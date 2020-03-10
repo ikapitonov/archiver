@@ -14,6 +14,7 @@ public class Constants {
 
     public final static String FILE_EXTENSION = "compress";
     public final static String FILE_NAME = "archive";
+    public final static String DIR_NAME = "unpack";
 
     public final static String PATH = System.getProperty("user.dir");//"/Users/sjamie/Desktop/fillit/libft/";
 
@@ -36,4 +37,7 @@ public class Constants {
 
     public final static String INVALID_ARCHIVE = "Файл поврежден. Работа программы завершена";
 
+    public final static String INVALID_DIR = "Не могу создать директорию \"" + Constants.DIR_NAME +  "\". Работа программы завершена";
+
+    public final static String INVALID_UNPACK = "Не могу создать файл или директорию. Работа программы завершена";
 }

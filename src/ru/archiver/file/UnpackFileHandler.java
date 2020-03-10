@@ -17,7 +17,6 @@ public class UnpackFileHandler {
                 new Unpack(inputStream).run();
                 inputStream.close();
             } catch (Exception e) {
-                e.printStackTrace();
                 System.out.println(Constants.OPEN_ERROR);
                 System.exit(1);
             }

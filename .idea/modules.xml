@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/activator.iml" filepath="$PROJECT_DIR$/activator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/archiver.iml" filepath="$PROJECT_DIR$/archiver.iml" />
     </modules>
   </component>
 </project>

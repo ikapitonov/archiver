@@ -5,6 +5,7 @@ import ru.archiver.config.Constants;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
@@ -20,7 +21,8 @@ public class SynchronizedIO {
     public SynchronizedIO(FileInputStream inputStream, String name, int blocksCount)
     {
         this.inputStream = inputStream;
-        this.file = new File("test.unpack/" + name);
+        mkdirIfExists();
+        this.file = new File(Constants.DIR_NAME + "/" + name);
         lastReadUser = Constants.MAX_THREAD - 1;
         lastWriteUser = Constants.MAX_THREAD - 1;
         this.blocksCount = blocksCount;
@@ -29,8 +31,19 @@ public class SynchronizedIO {
             this.outputStream = new FileOutputStream(this.file);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            System.exit(0);
+            System.out.println(Constants.INVALID_UNPACK);
+            System.exit(1);
+        }
+    }
+
+    private synchronized void mkdirIfExists() {
+        File dir = new File(Constants.DIR_NAME);
+
+        if (!dir.isDirectory()) {
+            if (!dir.mkdir()) {
+                System.out.println(Constants.INVALID_DIR);
+                System.exit(1);
+            }
         }
     }
 
