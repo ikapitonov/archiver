@@ -25,3 +25,4 @@ public class ResultCompression {
         this.array = array;
     }
 }
+ 

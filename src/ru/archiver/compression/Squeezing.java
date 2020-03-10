@@ -107,3 +107,4 @@ public class Squeezing {
         return currentAddress != -1 ? recursiveSearch(currentAddress) : overlap[address].getNewStart();
     }
 }
+ 

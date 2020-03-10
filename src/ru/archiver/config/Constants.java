@@ -41,3 +41,4 @@ public class Constants {
 
     public final static String INVALID_UNPACK = "Не могу создать файл или директорию. Работа программы завершена";
 }
+ 
