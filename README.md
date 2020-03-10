@@ -31,4 +31,4 @@ $ java -jar archiver.jar <file1> <file2> <file3>
 ```sh
 $ java -jar archiver.jar archive.compress
 ```
-При успешной распаковке должна создастся директория "unpack/"
+При успешной распаковке должна появиться директория "unpack/"
